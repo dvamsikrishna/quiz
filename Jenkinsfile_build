@@ -1,0 +1,76 @@
+pipeline{
+
+agent {
+                docker { 
+                    image "node:16.19.0-alpine"
+					args '-u 0:0'
+                    }
+                }
+				
+		stages {
+		    stage ('install cf cli'){
+		      steps {
+		       script { 
+		        sh '''
+	            apk update && 
+                apk upgrade &&
+                apk add --no-cache libc6-compat make bash && 
+                apk add --allow-untrusted --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing cloudfoundry-cli
+               
+	            cf add-plugin-repo CF-Community https://plugins.cloudfoundry.org
+                
+	            '''
+		            }
+		        }
+		    }
+			stage('React-BUILD') {
+            steps {
+              script{
+               echo "React Build"
+               
+                sh '''
+                cd $WORKSPACE
+                pwd 
+                ls -ltr
+                 npm install
+                  npm run build
+                ''' 
+             }
+            }
+        }
+        
+        stage('PCF Auth') {
+            
+            steps {
+                script{
+					echo "login to SAP CF dev space"
+					sh '''
+					cf login -a https://api.cf.us10.hana.ondemand.com -u krishnadv01@gmail.com -p Omsairam123$ -o 8eaa08b7trial -s dev
+					'''
+		
+					}
+                }
+                   
+        }
+
+      stage ('DEPLOY-MASTER') {
+           
+            steps {
+               
+               sh '''
+                echo "deploying to dev environment"
+				cd $Workspace
+				chmod 777 manifest.yml
+				cf push -f manifest.yml -s cflinuxfs3
+                '''
+              
+           }
+        }
+		}
+		post {
+        always {
+            echo "Cleaning Docker Workspace ....."
+            cleanWs()
+        }
+       }
+		}
