@@ -59,7 +59,6 @@ agent {
                
                sh '''
                 echo "deploying to dev environment"
-				cd $Workspace
 				chmod 777 manifest.yml
 				cf push -f manifest.yml -s cflinuxfs3
                 '''
