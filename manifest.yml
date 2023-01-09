@@ -1,0 +1,14 @@
+---
+applications:
+- name: kundana-automation-service-dv
+  #buildpacks:
+   # - java_buildpack_offline
+   # - java_buildpack (for ocf)
+  stack: cflinuxfs3
+ # path: target/WebApp.war
+  instances: 1
+  memory: 1G
+  disk_quota: 1G
+  
+  routes:
+    - route: kundana-automation-service-dv.cert.cfapps.us10.hana.ondemand.com
