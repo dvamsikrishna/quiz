@@ -5,8 +5,9 @@ applications:
    # - java_buildpack_offline
    # - java_buildpack (for ocf)
   stack: cflinuxfs3
- # path: target/WebApp.war
+  path: build/
   instances: 1
+  buildpack: https://github.com/cloudfoundry/staticfile-buildpack.git
   memory: 1G
   disk_quota: 1G
   
